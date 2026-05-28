@@ -13,6 +13,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Registrar el HttpClient apuntando a la URL base de la API del profesor
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://api-udec-pweb-aedec9hxbugye0am.westus3-01.azurewebsites.net/")
+});
+
+// Registrar nuestro servicio personalizado de la API
+builder.Services.AddScoped<SaludApiService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
