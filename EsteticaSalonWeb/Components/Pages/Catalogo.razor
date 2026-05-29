@@ -3,30 +3,35 @@
 @using EsteticaSalonWeb.Data
 @inject SaludApiService ApiService
 
-<PageTitle>Catálogo de Servicios - Estética</PageTitle>
+<PageTitle>Catálogo de Servicios - Glamour Salón</PageTitle>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary"><i class="bi bi-scissors"></i> Nuestro Catálogo de Servicios</h1>
-        <span class="badge bg-secondary">Datos desde API Externa</span>
+<div class="container mt-4 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h1 class="text-gold fw-bold mb-0"><i class="bi bi-scissors text-gold"></i>  Catálogo de Servicios</h1>
+            <small class="text-muted">Consumo descentralizado en tiempo real</small>
+        </div>
+        <span class="badge bg-dark text-gold border border-gold px-3 py-2 fs-7 shadow-sm">
+            <i class="bi bi-cloud-arrow-down-fill me-1"></i> REST API ACTIVADA
+        </span>
     </div>
 
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body bg-light">
-            <h5 class="card-title text-muted mb-3">Filtrar por Especialidad</h5>
-            <div class="row g-2">
-                <div class="col-md-8">
-                    <select class="form-select" @bind="especialidadSeleccionadaId">
-                        <option value="0">-- Mostrar todos los servicios --</option>
-                        <option value="1">Cabello (Cortes, Tintes, Peinados)</option>
-                        <option value="2">Uñas (Manicura, Pedicura)</option>
-                        <option value="3">Rostro (Maquillaje, Limpieza facial)</option>
-                        <option value="4">Cuidado Corporal / Masajes</option>
+    <div class="card mb-5 border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-body bg-dark-salon p-4 text-white">
+            <h5 class="card-title text-gold fw-bold mb-3"><i class="bi bi-funnel"></i> Filtrar por Especialidad</h5>
+            <div class="row g-3">
+                <div class="col-md-9">
+                    <select class="form-select border-0 shadow-sm bg-white text-dark py-2.5" @bind="especialidadSeleccionadaId">
+                        <option value="0">-- Mostrar todos los servicios disponibles --</option>
+                        <option value="1">Cabello (Cortes, Tintes, Tratamientos)</option>
+                        <option value="2">Uñas (Manicura, Pedicura, Gelish)</option>
+                        <option value="3">Rostro (Maquillaje Profesional, Limpiezas)</option>
+                        <option value="4">Cuidado Corporal y Masajes Relajantes</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <button class="btn btn-primary w-100" @onclick="FiltrarServicios">
-                        <i class="bi bi-funnel-fill"></i> Aplicar Filtro
+                <div class="col-md-3">
+                    <button class="btn btn-gold w-100 py-2.5 fw-bold shadow" @onclick="FiltrarServicios">
+                        <i class="bi bi-search"></i> Buscar Servicio
                     </button>
                 </div>
             </div>
@@ -35,16 +40,17 @@
 
     @if (servicios == null)
     {
-        <div class="d-flex align-items-center justify-content-center my-5">
-            <div class="spinner-border text-primary me-3" role="status"></div>
-            <strong class="text-secondary fs-4">Cargando catálogo...</strong>
+        <div class="d-flex flex-column align-items-center justify-content-center my-5 py-5">
+            <div class="spinner-border text-gold style-spinner" role="status"></div>
+            <strong class="text-secondary fs-5 mt-3">Consultando el servidor del Profesor Jaramillo...</strong>
         </div>
     }
     else if (!servicios.Any())
     {
-        <div class="alert alert-warning text-center shadow-sm" role="alert">
-            <i class="bi bi-exclamation-triangle-fill fs-3 d-block mb-2"></i>
-            No se encontraron servicios disponibles para esta categoría.
+        <div class="alert alert-custom-warning text-center shadow border-0 rounded-3 p-4" role="alert">
+            <i class="bi bi-exclamation-octagon text-warning fs-1 d-block mb-2"></i>
+            <h5 class="fw-bold text-dark">Estatus del Servidor: Error 500</h5>
+            <p class="text-muted mb-0">La API externa está respondiendo con una lista vacía o está en mantenimiento.</p>
         </div>
     }
     else
@@ -53,16 +59,16 @@
             @foreach (var servicio in servicios)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 rounded-3">
-                        <div class="card-body d-flex flex-column">
-                            <span class="badge bg-info text-dark align-self-start mb-2">
-                                @servicio.nombreEspecialidad
+                    <div class="card h-100 shadow-sm border-0 rounded-3 card-service transition-all">
+                        <div class="card-body d-flex flex-column p-4">
+                            <span class="badge bg-gold-light text-gold align-self-start mb-3 px-2.5 py-1.5 fw-semibold uppercase rounded-2">
+                                <i class="bi bi-tag-fill me-1"></i> @servicio.nombreEspecialidad
                             </span>
                             <h5 class="card-title fw-bold text-dark mb-2">@servicio.nombre</h5>
-                            <p class="card-text text-muted flex-grow-1">@servicio.descripcion</p>
-                            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                                <span class="text-muted small">ID: #@servicio.id</span>
-                                <span class="fs-4 fw-bold text-success">$@servicio.precio.ToString("N2")</span>
+                            <p class="card-text text-muted flex-grow-1 fs-6 lh-base">@servicio.descripcion</p>
+                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-light">
+                                <span class="text-muted font-monospace small">SKU: #@servicio.id</span>
+                                <span class="fs-3 fw-black text-success">$@servicio.precio.ToString("N2")</span>
                             </div>
                         </div>
                     </div>
@@ -73,13 +79,10 @@
 </div>
 
 @code {
-    // Lista donde guardaremos los datos que vengan de la API
     private List<ServicioApiDto>? servicios;
-    
-    // Variable enlazada al select para capturar el ID del filtro
+    private int profesionalOpcionId = 0; // alias de control
     private int especialidadSeleccionadaId = 0;
 
-    // Método del ciclo de vida de Blazor: Se ejecuta automáticamente al cargar la página
     protected override async Task OnInitializedAsync()
     {
         await CargarTodosLosServicios();
@@ -87,7 +90,7 @@
 
     private async Task CargarTodosLosServicios()
     {
-        servicios = null; // Volvemos a poner nulo para que se muestre el mensaje de "Cargando..."
+        servicios = null;
         servicios = await ApiService.ObtenerServiciosAsync();
     }
 

@@ -1,0 +1,62 @@
+﻿@page "/especiales"
+
+<PageTitle>Servicios VIP — Glamour Salón</PageTitle>
+
+<div class="container mt-4 animate-fade-in">
+    <div class="mb-4 pb-2 border-bottom border-secondary">
+        <h1 class="text-gold fw-bold mb-0"><i class="bi bi-gem me-2"></i> Experiencias VIP & Especiales</h1>
+        <small class="text-light-muted">Módulo adicional de administración de paquetes por temporada y promociones</small>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var p in paquetes)
+        {
+            <div class="col-md-4">
+                <div class="card card-premium-dark h-100 p-2">
+                    <div class="card-body d-flex flex-column text-white">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-gold text-dark uppercase fw-bold">Premium VIP</span>
+                            <span class="text-success fw-bold fs-5 font-monospace">$@p.Precio.ToString("N2")</span>
+                        </div>
+                        <h5 class="fw-bold text-gold mb-2">@p.Nombre</h5>
+                        <p class="text-light-muted small flex-grow-1">@p.Descripcion</p>
+                        <hr style="border-color: #444;" />
+                        <button class="btn btn-gold w-100 py-2 rounded-3 mt-2" @onclick="() => DesplegarCombo(p.Nombre)">
+                            <i class="bi bi-lightning-charge-fill me-1"></i> Lanzar Promoción
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(notificacion))
+    {
+        <div class="alert bg-dark text-gold border border-gold mt-4 shadow animate-fade-in" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @notificacion
+        </div>
+    }
+</div>
+
+@code {
+    private string notificacion = "";
+    private List<ComboPremium> paquetes = new()
+    {
+        new("Paquete Novia Glamour", "Incluye peinado de gala, maquillaje profesional de larga duración, manicura spa y pruebas de imagen.", 2500.00m),
+        new("Graduación Especial", "Diseñado para alumnas. Incluye diseño de ondas, sombreado social premium y aplicación de pestañas 3D.", 1200.00m),
+        new("Renovación de Imagen Total", "Asesoría capilar completa: extracción, tinte global o balayage, corte estilizado y tratamiento de hidratación profunda.", 1850.00m)
+    };
+
+    private void DesplegarCombo(string nombre)
+    {
+        notificacion = $"Éxito: El paquete '{nombre}' ha sido marcado como activo. Se desplegará preferencialmente en terminales de atención.";
+    }
+
+    public class ComboPremium
+    {
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public decimal Precio { get; set; }
+        public ComboPremium(string n, string d, decimal p) { Nombre = n; Descripcion = d; Precio = p; }
+    }
+}

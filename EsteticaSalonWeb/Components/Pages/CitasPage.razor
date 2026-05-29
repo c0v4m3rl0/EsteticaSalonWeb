@@ -6,115 +6,117 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject SaludApiService ApiService
 
-<PageTitle>Agendar Citas - Estética</PageTitle>
+<PageTitle>Reservación de Citas - Glamour Salón</PageTitle>
 
-<div class="container mt-4">
-    <h1 class="text-primary mb-4"><i class="bi bi-calendar-check-fill"></i> Reservación de Citas</h1>
+<div class="container mt-4 animate-fade-in">
+    <div class="mb-4 pb-2 border-bottom">
+        <h1 class="text-gold fw-bold mb-0"><i class="bi bi-calendar-check-fill text-gold"></i> Módulo de Integración Operativa</h1>
+        <small class="text-muted">Intersección de microservicios externos y esquemas locales relacionales</small>
+    </div>
 
-    <div class="row">
-        <div class="col-md-5 mb-4">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-primary text-white fw-bold py-3">
-                    <i class="bi bi-file-earmark-plus"></i> Nueva Cita
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-dark-salon text-white py-3 border-bottom-gold">
+                    <h5 class="card-title fw-bold mb-0 text-gold"><i class="bi bi-bookmark-plus-fill me-2"></i> Agendar Nueva Cita</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4 bg-white">
                     <EditForm Model="nuevaCita" OnValidSubmit="RegistrarCita">
                         <DataAnnotationsValidator />
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Cliente</label>
-                            <select class="form-select" @bind="nuevaCita.ClienteId">
-                                <option value="0">-- Selecciona un Cliente --</option>
-                                @if (listaClientes != null)
-                                {
-                                    @foreach (var c in listaClientes)
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark fs-7 uppercase">1. Seleccionar Cliente de la Base de Datos</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-person-fill text-muted"></i></span>
+                                <select class="form-select border-start-0 bg-light" @bind="nuevaCita.ClienteId">
+                                    <option value="0">-- Desplegar registros de Azure SQL --</option>
+                                    @if (listaClientes != null)
                                     {
-                                        <option value="@c.Id">@c.Nombre</option>
+                                        @foreach (var c in listaClientes)
+                                        {
+                                            <option value="@c.Id">@c.Nombre</option>
+                                        }
                                     }
-                                }
-                            </select>
-                            <ValidationMessage For="() => nuevaCita.ClienteId" class="text-danger small" />
+                                </select>
+                            </div>
+                            <ValidationMessage For="() => nuevaCita.ClienteId" class="text-danger small mt-1" />
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Servicio disponible</label>
-                            <select class="form-select" @bind="servicioSeleccionadoId">
-                                <option value="0">-- Selecciona un Servicio --</option>
-                                @if (listaServiciosApi != null)
-                                {
-                                    @foreach (var s in listaServiciosApi)
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark fs-7 uppercase">2. Seleccionar Servicio del Catálogo API</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-tags-fill text-muted"></i></span>
+                                <select class="form-select border-start-0 bg-light" @bind="servicioSeleccionadoId">
+                                    <option value="0">-- Desplegar respuesta JSON externa --</option>
+                                    @if (listaServiciosApi != null)
                                     {
-                                        <option value="@s.id">@s.nombre - $@s.precio.ToString("N2")</option>
+                                        @foreach (var s in listaServiciosApi)
+                                        {
+                                            <option value="@s.id">@s.nombre — $@s.precio.ToString("N2")</option>
+                                        }
                                     }
-                                }
-                            </select>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Fecha y Hora del Servicio</label>
-                            <input type="datetime-local" class="form-control" @bind="nuevaCita.Fecha" />
-                            <ValidationMessage For="() => nuevaCita.Fecha" class="text-danger small" />
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark fs-7 uppercase">3. Programación de Horario</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-clock-fill text-muted"></i></span>
+                                <input type="datetime-local" class="form-control border-start-0 bg-light" @bind="nuevaCita.Fecha" />
+                            </div>
+                            <ValidationMessage For="() => nuevaCita.Fecha" class="text-danger small mt-1" />
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
-                            <i class="bi bi-calendar-plus"></i> Guardar Cita en Azure
+                        <button type="submit" class="btn btn-gold w-100 py-3 fw-bold mt-2 shadow">
+                            <i class="bi bi-calendar-plus-fill me-1"></i> Confirmar Transacción e Insertar
                         </button>
                     </EditForm>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-7">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-dark text-white fw-bold py-3">
-                    <i class="bi bi-list-stars"></i> Agenda del Día (Azure SQL)
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+                <div class="card-header bg-light text-dark py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold mb-0 text-dark-salon"><i class="bi bi-clock-history me-2"></i> Citas Almacenadas</h5>
+                    <span class="badge bg-secondary-light text-dark font-monospace">Esquema: dbo.Citas</span>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-4 bg-light-gray-panel overflow-auto" style="max-height: 480px;">
                     @if (listaCitasAgendadas == null)
                     {
-                        <div class="p-4 text-center">
-                            <div class="spinner-border text-primary" role="status"></div>
-                            <p class="text-muted small mt-2">Consultando agenda...</p>
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-gold style-spinner" role="status"></div>
+                            <p class="text-muted small mt-2">Sincronizando log relacional...</p>
                         </div>
                     }
                     else if (!listaCitasAgendadas.Any())
                     {
-                        <div class="p-4 alert alert-light text-center m-3 m-0 border text-muted">
-                            No hay citas registradas para hoy.
+                        <div class="text-center py-5 border border-dashed rounded-3 bg-white text-muted">
+                            <i class="bi bi-calendar-x fs-1 mb-2 d-block"></i>
+                            No existen reservaciones activas para el ciclo actual.
                         </div>
                     }
                     else
                     {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle m-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Cliente</th>
-                                        <th>Fecha / Hora</th>
-                                        <th class="text-end">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var cita in listaCitasAgendadas)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <div class="fw-bold text-dark">@cita.Cliente?.Nombre</div>
-                                                <small class="text-muted">Tel: @cita.Cliente?.Telefono</small>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-secondary">
-                                                    @cita.Fecha.ToString("dd/MM/yyyy - hh:mm tt")
-                                                </span>
-                                            </td>
-                                            <td class="text-end fw-bold text-success fs-5">
-                                                $@cita.Total.ToString("N2")
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                        @foreach (var cita in listaCitasAgendadas)
+                        {
+                            <div class="card border-0 shadow-lg rounded-2 mb-3 bg-white p-3 border-start-success-indicator">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-1">@cita.Cliente?.Nombre</h6>
+                                        <p class="text-muted small mb-2"><i class="bi bi-telephone me-1"></i> Contacto: @cita.Cliente?.Telefono</p>
+                                        <span class="badge bg-light text-dark border p-2 rounded-2 fs-8 font-monospace fw-normal">
+                                            <i class="bi bi-alarm me-1 text-gold"></i> @cita.Fecha.ToString("dd/MM/yyyy — hh:mm tt")
+                                        </span>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted uppercase font-monospace d-block fs-9">Total Cobrado</small>
+                                        <span class="fs-4 fw-black text-success">$@cita.Total.ToString("N2")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -139,11 +141,7 @@
     private async Task CargarDatosDeAzure()
     {
         using var context = await DbFactory.CreateDbContextAsync();
-        
-        // Cargar Clientes para el dropdown
         listaClientes = await context.Clientes.OrderBy(c => c.Nombre).ToListAsync();
-        
-        // Cargar Citas agendadas incluyendo los datos del cliente conectado
         listaCitasAgendadas = await context.Citas
             .Include(c => c.Cliente)
             .OrderByDescending(c => c.Fecha)
@@ -152,41 +150,24 @@
 
     private async Task CargarServiciosDeApi()
     {
-        // Intentamos traer los datos de la API externa
+        // Consumir directamente los servicios reales de la API del maestro
         listaServiciosApi = await ApiService.ObtenerServiciosAsync();
-
-        // 🚨 PLAN B INGENIERIL: Si la API del profe sigue caída (vuelve vacía),
-        // simulamos datos localmente para que el examen sea completamente funcional hoy.
-        if (listaServiciosApi == null || !listaServiciosApi.Any())
-        {
-            listaServiciosApi = new List<ServicioApiDto>
-            {
-                new() { id = 101, nombre = "Corte Estilo Spa (Salud)", precio = 350.00m, nombreEspecialidad = "Cabello" },
-                new() { id = 102, nombre = "Tratamiento Capilar Hidratante", precio = 600.00m, nombreEspecialidad = "Cabello" },
-                new() { id = 103, nombre = "Manicura y Sanado de Cutícula", precio = 280.00m, nombreEspecialidad = "Uñas" },
-                new() { id = 104, nombre = "Limpieza Facial Profunda", precio = 450.00m, nombreEspecialidad = "Rostro" }
-            };
-        }
     }
 
     private async Task RegistrarCita()
     {
         if (nuevaCita.ClienteId == 0 || servicioSeleccionadoId == 0) return;
 
-        // Buscar el servicio seleccionado para extraer el precio
         var serv = listaServiciosApi?.FirstOrDefault(s => s.id == servicioSeleccionadoId);
         if (serv == null) return;
 
         using var context = await DbFactory.CreateDbContextAsync();
 
-        // Asignar el total de la cita
         nuevaCita.Total = serv.precio;
 
-        // Guardar la Cita Padre
         context.Citas.Add(nuevaCita);
-        await context.SaveChangesAsync(); // Genera el CitaId automático
+        await context.SaveChangesAsync();
 
-        // Guardar el Detalle de la Cita (Tabla relacional)
         var detalle = new DetalleServicio
         {
             CitaId = nuevaCita.Id,
@@ -196,7 +177,6 @@
         context.DetallesServicios.Add(detalle);
         await context.SaveChangesAsync();
 
-        // Reiniciar formulario y refrescar la interfaz
         nuevaCita = new Cita { Fecha = DateTime.Now };
         servicioSeleccionadoId = 0;
         await CargarDatosDeAzure();

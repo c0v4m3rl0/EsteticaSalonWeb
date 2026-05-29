@@ -4,109 +4,133 @@
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
-<PageTitle>Gestión de Clientes - Estética</PageTitle>
+<PageTitle>Clientes — Glamour Salón</PageTitle>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary"><i class="bi bi-people-fill"></i> Control de Clientes</h1>
-        <button class="btn btn-success" @onclick="AbrirModalCrear">
-            <i class="bi bi-plus-circle-fill"></i> Registrar Nuevo Cliente
+<div class="container mt-4 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div>
+            <h1 class="text-gold fw-bold mb-0"><i class="bi bi-people-fill"></i> Registro de Clientes</h1>
+            <small class="text-light-muted">Control de base de datos local remota en Azure SQL</small>
+        </div>
+        <button class="btn btn-gold shadow-sm px-4 py-2" @onclick="AbrirModalCrear">
+            <i class="bi bi-person-plus-fill me-2"></i> Nuevo Cliente
         </button>
     </div>
 
     @if (listaClientes == null)
     {
-        <div class="text-center my-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="text-muted mt-2">Cargando base de datos de Azure SQL...</p>
+        <div class="text-center my-5 py-5">
+            <div class="spinner-border text-gold" role="status"></div>
+            <p class="text-light-muted mt-3">Estableciendo túnel de datos seguro con Azure SQL...</p>
         </div>
     }
     else if (!listaClientes.Any())
     {
-        <div class="alert alert-info text-center shadow-sm">
-            <i class="bi bi-info-circle-fill fs-3 d-block mb-2"></i>
-            No hay clientes registrados en el sistema. ¡Comienza agregando el primero!
+        <div class="alert bg-dark text-gold border border-gold text-center p-5 rounded-3">
+            <i class="bi bi-folder-x fs-1 d-block mb-2"></i>
+            <h5 class="fw-bold">No hay registros</h5>
+            <p class="text-light-muted mb-0">La tabla Clientes en Azure SQL se encuentra vacía.</p>
         </div>
     }
     else
     {
-        <div class="table-responsive shadow-sm rounded-3">
-            <table class="table table-hover align-middle bg-white m-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre Completo</th>
-                        <th>Teléfono</th>
-                        <th>Correo Electrónico</th>
-                        <th>Fecha de Registro</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cliente in listaClientes)
-                    {
+        <div class="card border-0 shadow-lg rounded-3 overflow-hidden bg-white text-dark-custom">
+            <div class="table-responsive m-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background-color: #111111; color: #d4af37; border-bottom: 3px solid #d4af37;">
                         <tr>
-                            <td class="fw-bold text-secondary">#@cliente.Id</td>
-                            <td>@cliente.Nombre</td>
-                            <td>@cliente.Telefono</td>
-                            <td>@cliente.Email</td>
-                            <td>@cliente.FechaRegistro.ToString("dd/MM/yyyy hh:mm tt")</td>
-                            <td class="text-center">
-                                <button class="btn btn-warning btn-sm me-1" @onclick="() => AbrirModalEditar(cliente)">
-                                    <span>Editar</span>
-                                </button>
-                                <button class="btn btn-danger btn-sm" @onclick="() => EliminarCliente(cliente.Id)">
-                                    <span>Eliminar</span>
-                                </button>
-                            </td>
+                            <th class="ps-4 py-3">ID</th>
+                            <th class="py-3">Nombre del Cliente</th>
+                            <th class="py-3">Teléfono</th>
+                            <th class="py-3">Correo Electrónico</th>
+                            <th class="text-center py-3 pe-4">Acciones</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var cliente in listaClientes)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-gold">#@cliente.Id</td>
+                                <td class="fw-semibold text-dark">@cliente.Nombre</td>
+                                <td class="text-dark"><i class="bi bi-telephone text-muted me-2"></i>@cliente.Telefono</td>
+                                <td class="text-dark"><i class="bi bi-envelope text-muted me-2"></i>@cliente.Email</td>
+                                <td class="text-center pe-4">
+                                    <button class="btn btn-outline-dark btn-sm border-0 me-1 p-2 rounded-circle" title="Editar" @onclick="() => AbrirModalEditar(cliente)">
+                                        <i class="bi bi-pencil-fill text-warning"></i>
+                                    </button>
+                                    <button class="btn btn-outline-dark btn-sm border-0 p-2 rounded-circle" title="Eliminar" @onclick="() => SeleccionarParaEliminar(cliente)">
+                                        <i class="bi bi-trash3-fill text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 </div>
 
-@if (mostrarModal)
+@if (mostrarModalFormulario)
 {
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal fade show d-block backdrop-blur" style="background-color: rgba(0,0,0,0.6);" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold">
-                        @(clienteFormulario.Id == 0 ? "Registrar Nuevo Cliente" : "Modificar Datos del Cliente")
+            <div class="modal-content border-0 shadow-lg bg-white text-dark-custom">
+                <div class="modal-header bg-dark text-white py-3" style="border-bottom: 2px solid #d4af37;">
+                    <h5 class="modal-title fw-bold text-gold">
+                        <i class="bi bi-sliders2 me-2"></i> @(clienteFormulario.Id == 0 ? "Registrar Cliente" : "Actualizar Información")
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModal"></button>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModalFormulario"></button>
                 </div>
                 
                 <EditForm Model="clienteFormulario" OnValidSubmit="GuardarCliente">
                     <DataAnnotationsValidator />
-                    
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Nombre Completo</label>
-                            <InputText class="form-control" @bind-Value="clienteFormulario.Nombre" placeholder="Ej. Juan Pérez" />
-                            <ValidationMessage For="() => clienteFormulario.Nombre" class="text-danger small" />
+                            <label class="form-label fw-bold text-secondary text-uppercase small">Nombre Completo</label>
+                            <InputText class="form-control bg-light" @bind-Value="clienteFormulario.Nombre" placeholder="Nombre y Apellido" />
+                            <ValidationMessage For="() => clienteFormulario.Nombre" class="text-danger small mt-1" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Teléfono</label>
-                            <InputText class="form-control" @bind-Value="clienteFormulario.Telefono" placeholder="Ej. 3121234567" />
-                            <ValidationMessage For="() => clienteFormulario.Telefono" class="text-danger small" />
+                            <label class="form-label fw-bold text-secondary text-uppercase small">Teléfono Móvil</label>
+                            <InputText class="form-control bg-light" @bind-Value="clienteFormulario.Telefono" placeholder="10 dígitos" />
+                            <ValidationMessage For="() => clienteFormulario.Telefono" class="text-danger small mt-1" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Correo Electrónico</label>
-                            <InputText class="form-control" @bind-Value="clienteFormulario.Email" placeholder="juan@ejemplo.com" />
-                            <ValidationMessage For="() => clienteFormulario.Email" class="text-danger small" />
+                            <label class="form-label fw-bold text-secondary text-uppercase small">Email</label>
+                            <InputText class="form-control bg-light" @bind-Value="clienteFormulario.Email" placeholder="correo@dominio.com" />
+                            <ValidationMessage For="() => clienteFormulario.Email" class="text-danger small mt-1" />
                         </div>
                     </div>
-                    
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-cloud-arrow-up-fill"></i> Guardar en Azure
-                        </button>
+                    <div class="modal-footer bg-light py-3">
+                        <button type="button" class="btn btn-secondary px-4" @onclick="CerrarModalFormulario">Cancelar</button>
+                        <button type="submit" class="btn btn-gold px-4 shadow">Confirmar Cambios</button>
                     </div>
                 </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@if (mostrarModalConfirmacion)
+{
+    <div class="modal fade show d-block backdrop-blur" style="background-color: rgba(0,0,0,0.7);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg bg-white text-dark-custom">
+                <div class="modal-body p-4 text-center">
+                    <div class="text-danger mb-3">
+                        <i class="bi bi-exclamation-triangle-fill display-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">¿Confirmar Eliminación?</h5>
+                    <p class="text-muted small">Estas a punto de borrar permanentemente a:<br /><strong class="text-dark">@clienteAEliminar?.Nombre</strong></p>
+                    
+                    <div class="d-flex justify-content-center gap-2 mt-4">
+                        <button type="button" class="btn btn-secondary px-3 btn-sm" @onclick="CerrarModalConfirmacion">Cancelar</button>
+                        <button type="button" class="btn btn-danger px-3 btn-sm fw-bold" @onclick="ConfirmarEliminarCliente">
+                            <i class="bi bi-trash3"></i> Sí, Eliminar
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -115,7 +139,10 @@
 @code {
     private List<Cliente>? listaClientes;
     private Cliente clienteFormulario = new();
-    private bool mostrarModal = false;
+    private Cliente? clienteAEliminar;
+    
+    private bool mostrarModalFormulario = false;
+    private bool mostrarModalConfirmacion = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -130,13 +157,12 @@
 
     private void AbrirModalCrear()
     {
-        clienteFormulario = new Cliente(); // Limpiar el formulario
-        mostrarModal = true;
+        clienteFormulario = new Cliente();
+        mostrarModalFormulario = true;
     }
 
     private void AbrirModalEditar(Cliente clienteSeleccionado)
     {
-        // Creamos una copia para no alterar la lista principal directamente antes de guardar
         clienteFormulario = new Cliente
         {
             Id = clienteSeleccionado.Id,
@@ -145,13 +171,18 @@
             Email = clienteSeleccionado.Email,
             FechaRegistro = clienteSeleccionado.FechaRegistro
         };
-        mostrarModal = true;
+        mostrarModalFormulario = true;
     }
 
-    private void CerrarModal()
+    private void CerrarModalFormulario() => mostrarModalFormulario = false;
+
+    private void SeleccionarParaEliminar(Cliente cliente)
     {
-        mostrarModal = false;
+        clienteAEliminar = cliente;
+        mostrarModalConfirmacion = true;
     }
+
+    private void CerrarModalConfirmacion() => mostrarModalConfirmacion = false;
 
     private async Task GuardarCliente()
     {
@@ -159,30 +190,33 @@
 
         if (clienteFormulario.Id == 0)
         {
-            // Es un cliente nuevo: Insertar (Create)
             context.Clientes.Add(clienteFormulario);
         }
         else
         {
-            // Es un cliente existente: Modificar (Update)
             context.Entry(clienteFormulario).State = EntityState.Modified;
         }
 
         await context.SaveChangesAsync();
-        mostrarModal = false;
-        await CargarClientes(); // Recargar la tabla con los datos frescos de Azure
+        mostrarModalFormulario = false;
+        await CargarClientes();
     }
 
-    private async Task EliminarCliente(int id)
+    private async Task ConfirmarEliminarCliente()
     {
+        if (clienteAEliminar == null) return;
+
         using var context = await DbFactory.CreateDbContextAsync();
-        var cliente = await context.Clientes.FindAsync(id);
+        var cliente = await context.Clientes.FindAsync(clienteAEliminar.Id);
         
         if (cliente != null)
         {
-            context.Clientes.Remove(cliente); // Borrar (Delete)
+            context.Clientes.Remove(cliente);
             await context.SaveChangesAsync();
-            await CargarClientes(); // Recargar la tabla
         }
+
+        mostrarModalConfirmacion = false;
+        clienteAEliminar = null;
+        await CargarClientes();
     }
 }

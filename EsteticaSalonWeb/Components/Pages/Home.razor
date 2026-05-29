@@ -1,7 +1,64 @@
 ﻿@page "/"
+@using EsteticaSalonWeb.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard — Glamour Salón</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container mt-4 animate-fade-in">
+    <div class="p-5 mb-5 rounded-3 text-white shadow-lg" 
+         style="background: linear-gradient(135deg, #0a0a0a 0%, #222222 100%); border-left: 5px solid #d4af37;">
+        <div class="container-fluid py-2">
+            <h1 class="display-5 fw-bold text-gold"><i class="bi bi-scissors me-2"></i> Bienvenido a Glamour Salón</h1>
+            <p class="fs-5 text-light-muted mt-3">
+                Sistema centralizado de administración operativa. Controla de forma segura tu base de datos en Azure SQL y consume servicios distribuidos vía REST API.
+            </p>
+        </div>
+    </div>
 
-Welcome to your new app.
+    <h3 class="text-gold fw-bold mb-4"><i class="bi bi-grid-1x2-fill me-2"></i> Métricas Clave</h3>
+    
+    <div class="row g-4 mb-5">
+        <a href="/clientes" class="col-md-6 shadow-lg">
+            <div class="card-metric p-3">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted uppercase fw-bold small mb-1">Total de Clientes</h6>
+                        <h2 class="display-4 fw-black text-dark-custom my-1">@totalClientes</h2>
+                        <p class="text-secondary small m-0 p-0"><i class="bi bi-database-check text-success"></i> Sincronizados en Azure SQL</p>
+                    </div>
+                    <div class="p-3 bg-light rounded-circle">
+                        <i class="bi bi-people-fill text-gold fs-1 d-block"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <a href="/citas" class="col-md-6">
+            <div class="card-metric p-3" style="border-left-color: #28a745 !important;">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted uppercase fw-bold small mb-1">Citas Agendadas Hoy</h6>
+                        <h2 class="display-4 fw-black text-dark-custom my-1">@totalCitas</h2>
+                        <p class="text-secondary small m-0 p-0"><i class="bi bi-calendar-check text-success"></i> Operaciones Registradas</p>
+                    </div>
+                    <div class="p-3 bg-light rounded-circle">
+                        <i class="bi bi-calendar2-week-fill text-success fs-1 d-block"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+@code {
+    private int totalClientes = 0;
+    private int totalCitas = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        totalClientes = await context.Clientes.CountAsync();
+        totalCitas = await context.Citas.CountAsync();
+    }
+}
