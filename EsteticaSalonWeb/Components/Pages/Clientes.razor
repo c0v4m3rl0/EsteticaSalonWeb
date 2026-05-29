@@ -53,10 +53,10 @@
                             <td>@cliente.FechaRegistro.ToString("dd/MM/yyyy hh:mm tt")</td>
                             <td class="text-center">
                                 <button class="btn btn-warning btn-sm me-1" @onclick="() => AbrirModalEditar(cliente)">
-                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Editar</span>
                                 </button>
                                 <button class="btn btn-danger btn-sm" @onclick="() => EliminarCliente(cliente.Id)">
-                                    <i class="bi bi-trash-fill"></i>
+                                    <span>Eliminar</span>
                                 </button>
                             </td>
                         </tr>

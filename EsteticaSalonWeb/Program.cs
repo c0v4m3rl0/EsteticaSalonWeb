@@ -6,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Cambia la línea de builder.Services.AddDbContext por esta:
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -21,6 +25,7 @@ builder.Services.AddScoped(sp => new HttpClient
 
 // Registrar nuestro servicio personalizado de la API
 builder.Services.AddScoped<SaludApiService>();
+
 
 var app = builder.Build();
 
