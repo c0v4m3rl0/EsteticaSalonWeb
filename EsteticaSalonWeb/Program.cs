@@ -9,7 +9,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Add services to the container.
+// Add services to the containerhttps://api-udec-pweb.azurewebsites.net/
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 

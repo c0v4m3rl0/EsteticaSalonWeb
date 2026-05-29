@@ -1,0 +1,106 @@
+﻿@page "/catalogo"
+@using EsteticaSalonWeb.DTOs
+@using EsteticaSalonWeb.Data
+@inject SaludApiService ApiService
+
+<PageTitle>Catálogo de Servicios - Estética</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary"><i class="bi bi-scissors"></i> Nuestro Catálogo de Servicios</h1>
+        <span class="badge bg-secondary">Datos desde API Externa</span>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body bg-light">
+            <h5 class="card-title text-muted mb-3">Filtrar por Especialidad</h5>
+            <div class="row g-2">
+                <div class="col-md-8">
+                    <select class="form-select" @bind="especialidadSeleccionadaId">
+                        <option value="0">-- Mostrar todos los servicios --</option>
+                        <option value="1">Cabello (Cortes, Tintes, Peinados)</option>
+                        <option value="2">Uñas (Manicura, Pedicura)</option>
+                        <option value="3">Rostro (Maquillaje, Limpieza facial)</option>
+                        <option value="4">Cuidado Corporal / Masajes</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" @onclick="FiltrarServicios">
+                        <i class="bi bi-funnel-fill"></i> Aplicar Filtro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (servicios == null)
+    {
+        <div class="d-flex align-items-center justify-content-center my-5">
+            <div class="spinner-border text-primary me-3" role="status"></div>
+            <strong class="text-secondary fs-4">Cargando catálogo...</strong>
+        </div>
+    }
+    else if (!servicios.Any())
+    {
+        <div class="alert alert-warning text-center shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-3 d-block mb-2"></i>
+            No se encontraron servicios disponibles para esta categoría.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var servicio in servicios)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-3">
+                        <div class="card-body d-flex flex-column">
+                            <span class="badge bg-info text-dark align-self-start mb-2">
+                                @servicio.nombreEspecialidad
+                            </span>
+                            <h5 class="card-title fw-bold text-dark mb-2">@servicio.nombre</h5>
+                            <p class="card-text text-muted flex-grow-1">@servicio.descripcion</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                <span class="text-muted small">ID: #@servicio.id</span>
+                                <span class="fs-4 fw-bold text-success">$@servicio.precio.ToString("N2")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    // Lista donde guardaremos los datos que vengan de la API
+    private List<ServicioApiDto>? servicios;
+    
+    // Variable enlazada al select para capturar el ID del filtro
+    private int especialidadSeleccionadaId = 0;
+
+    // Método del ciclo de vida de Blazor: Se ejecuta automáticamente al cargar la página
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarTodosLosServicios();
+    }
+
+    private async Task CargarTodosLosServicios()
+    {
+        servicios = null; // Volvemos a poner nulo para que se muestre el mensaje de "Cargando..."
+        servicios = await ApiService.ObtenerServiciosAsync();
+    }
+
+    private async Task FiltrarServicios()
+    {
+        if (especialidadSeleccionadaId == 0)
+        {
+            await CargarTodosLosServicios();
+        }
+        else
+        {
+            servicios = null;
+            servicios = await ApiService.ObtenerServiciosPorEspecialidadAsync(especialidadSeleccionadaId);
+        }
+    }
+}
