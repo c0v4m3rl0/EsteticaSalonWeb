@@ -1,43 +1,24 @@
 # 🏢 Glamour Salón & Estética — Sistema de Gestión Web
-> **Desarrollado por:** Adrián Covarrubias
-> **Estatus del Proyecto:** Entregable Final v1.0
-> **Infraestructura:** Blazor Server / .NET 8 / EF Core / Azure SQL Database
+> **Desarrollado por:** Adrián Felipe Covarrubias Merlo
+> **Numero de cuenta:** 20204423
+> **Negocio asignado,:** Estetica/Salon
+> **URL API,:** https://api-udec-pweb.azurewebsites.net
+
+![Texto alternativo por si no carga](imagenes/dashboard.png)
+![Texto alternativo por si no carga](imagenes/citas.png)
+![Texto alternativo por si no carga](imagenes/clientes.png)
+![Texto alternativo por si no carga](imagenes/servicios.png)
 
 ---
 
-## 📋 Descripción del Sistema
-Glamour Salón es un software web responsivo empresarial diseñado bajo un enfoque híbrido descentralizado. Permite administrar de forma integrada el catálogo de servicios sanitarios e institucionales de belleza mediante el consumo de una API REST externa, interceptando dichos datos de forma relacional con una base de datos distribuida en la nube para el control operativo de altas de clientes y agendamiento transaccional de citas.
+## 🤖 Declaratoria de Uso de Inteligencia Artificial (IA)
 
----
+En cumplimiento con los lineamientos académicos del proyecto, se declara que se utilizó **Inteligencia Artificial (Gemini/LLM)** como herramienta de soporte y co-creación arquitectónica durante las fases del desarrollo de este software.
 
-## 🛠️ Especificaciones Técnicas y Cumplimiento de Rúbrica
+### 🛠️ Áreas en las que se implementó el uso de IA:
+1. **Refactorización y Estilizado CSS:** Optimización y limpieza del archivo global `wwwroot/app.css` para aplicar de forma consistente la paleta de tres colores del proyecto y corregir problemas de colisión de estilos (iconos ocultos).
+2. **Estructuración del Frontend en Blazor:** Soporte en la maquetación semántica basada en Bootstrap para lograr componentes responsivos y legibles en las 5 vistas del sistema.
+3. **Mecanismo de Usabilidad (UX):** Apoyo en la lógica de control para el despliegue secuencial de los componentes flotantes (`Modal`) que gestionan los formularios de validación y la confirmación segura de eliminación física de registros.
+4. **Redacción de Documentación Técnica:** Soporte en el formato y orden estructural Markdown de este archivo de documentación para garantizar la entrega formal de la rúbrica.
 
-El sistema cumple rigurosamente con los 5 bloques estructurales requeridos por el esquema de evaluación:
-
-### 1. Interfaz de Usuario y Estética unificada (Dashboard)
-* **Diseño Conductor:** Paleta de tres colores corporativa basada en Negro Mate (`#1a1a1a`), Oro de Acento (`#d4af37`), y Blanco Comercial (`#ffffff`) para el óptimo contraste.
-* **Métricas Operativas de Control:** Pantalla principal (`Home.razor`) automatizada que ejecuta funciones agregadas (`CountAsync()`) directamente en Azure SQL para reportar en tiempo real el total de clientes y transacciones vigentes.
-
-### 2. Consumo de API Externa Descentralizada (`Catalogo.razor`)
-* **Patrones de Control Asíncrono:** Implementación estricta del bloque condicional `@if (datos == null)` para desplegar Spinners visuales durante el tiempo de respuesta del servidor externo.
-* **Filtros de Búsqueda:** Selector parametrizado funcional que discrimina los servicios por su identificador de Especialidad.
-
-### 3. Operaciones Relacionales CRUD Locales/Remotas (`Clientes.razor`)
-* **Persistencia de Datos:** Conexión persistente mediante Entity Framework Core hacia **Azure SQL Database** para operaciones seguras de Insertar, Modificar, Consultar y Eliminar.
-* **Validación de Modelos:** Formularios protegidos con `<DataAnnotationsValidator />` y componentes nativos de Blazor para evitar cargas vacías o datos corruptos.
-* **Mecanismo de Confirmación Segura:** Integración de un Modal Flotante de Verificación para operaciones de borrado físico (`Delete`), impidiendo la pérdida accidental de información del cliente.
-
-### 4. Integración y Transaccionalidad (`CitasPage.razor`)
-* **Inserción Compuesta:** Módulo maestro que asocia las llaves primarias de los clientes locales con las llaves lógicas de los servicios devueltos por la API externa, calculando el impacto financiero directo en la base de datos distribuida.
-
-### 5. Escalabilidad y Valor Agregado (`Especiales.razor` — Módulo Extra)
-* **Pantalla Extra Opcional:** Módulo de administración para paquetes premium estacionales (Novias, Graduaciones), expandiendo las capacidades comerciales de la arquitectura de software propuesta.
-
----
-
-## 🚀 Instrucciones de Despliegue Local
-
-1.  **Clonar/Abrir Proyecto:** Abrir el archivo de solución `EsteticaSalonWeb.sln` en Visual Studio 2022.
-2.  **Configurar Connection String:** Verificar las credenciales del servidor Azure en el archivo `appsettings.json`.
-3.  **Restaurar Dependencias:** Ejecutar la restauración de paquetes NuGet (`Microsoft.EntityFrameworkCore.SqlServer`, etc.).
-4.  **Compilar y Correr:** Presionar `F5` para lanzar el servidor local de Kestrel y desplegar el sistema en el navegador.
+*Nota: Toda la lógica de persistencia de datos (Entity Framework Core), las credenciales de conexión remota a Azure SQL Database y las llamadas asíncronas HTTP al servicio REST API institucional fueron configuradas, probadas y validadas manualmente por el autor de este proyecto, asegurando el control total y entendimiento del backend de la aplicación.*
